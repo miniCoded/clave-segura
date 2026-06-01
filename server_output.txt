@@ -1,0 +1,31 @@
+﻿node.exe : - Generating browser application bundles (phase: setup)...
+En línea: 1 Carácter: 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\cryst\AppData\Roaming\ ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (- Generating br...hase: setup)...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ÔêÜ Browser application bundle generation complete.
+
+Initial Chunk Files   | Names         |  Raw Size
+vendor.js             | vendor        |   2.26 MB |
+polyfills.js          | polyfills     | 252.55 kB |
+styles.css, styles.js | styles        | 150.10 kB |
+main.js               | main          |  28.12 kB |
+runtime.js            | runtime       |   6.50 kB |
+
+| Initial Total |   2.69 MB
+
+Build at: 2026-06-01T04:51:40.635Z - Hash: 3e2e1ced02e5e433 - Time: 7198ms
+
+** Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+
+
+ÔêÜ Compiled successfully.
+ÔêÜ Browser application bundle generation complete.
+
+5 unchanged chunks
+
+Build at: 2026-06-01T04:51:40.909Z - Hash: 3e2e1ced02e5e433 - Time: 162ms
+
+ÔêÜ Compiled successfully.

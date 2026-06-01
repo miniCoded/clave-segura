@@ -1,0 +1,103 @@
+﻿Feature: Password Security Rating # features/password_rating.feature:1
+  As a user
+  I want to rate the security of my password
+  So that I can create secure passwords
+  Scenario: Password is secure with 12+ characters and all requirements  # features/password_rating.feature:6
+    Given I enter a password "MyStr0ng@Pwd99"                            # features/steps/password_steps.py:4
+    When I submit the password                                           # features/steps/password_steps.py:9
+    Then the password should be rated as "secure"                        # features/steps/password_steps.py:13
+    And the textbox should be colored "green"                            # features/steps/password_steps.py:18
+    And the feedback should show all requirements met                    # features/steps/password_steps.py:29
+
+  Scenario: Password is half-secure with 7-11 characters and all requirements  # features/password_rating.feature:13
+    Given I enter a password "MyP@ss99"                                        # features/steps/password_steps.py:4
+    When I submit the password                                                 # features/steps/password_steps.py:9
+    Then the password should be rated as "half-secure"                         # features/steps/password_steps.py:13
+    And the textbox should be colored "amber"                                  # features/steps/password_steps.py:18
+    And the feedback should indicate 7-11 characters                           # features/steps/password_steps.py:39
+
+  Scenario: Password is unsafe with less than 7 characters  # features/password_rating.feature:20
+    Given I enter a password "Pass1!"                       # features/steps/password_steps.py:4
+    When I submit the password                              # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe"           # features/steps/password_steps.py:13
+    And the textbox should be colored "red"                 # features/steps/password_steps.py:18
+    And the feedback should indicate too short              # features/steps/password_steps.py:44
+
+  Scenario: Password is unsafe without uppercase letters  # features/password_rating.feature:27
+    Given I enter a password "myp@ssw0rd1234"             # features/steps/password_steps.py:4
+    When I submit the password                            # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe"         # features/steps/password_steps.py:13
+    And the textbox should be colored "red"               # features/steps/password_steps.py:18
+
+  Scenario: Password is unsafe without lowercase letters  # features/password_rating.feature:33
+    Given I enter a password "MYP@SSW0RD1234"             # features/steps/password_steps.py:4
+    When I submit the password                            # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe"         # features/steps/password_steps.py:13
+    And the textbox should be colored "red"               # features/steps/password_steps.py:18
+
+  Scenario: Password is unsafe without numbers    # features/password_rating.feature:39
+    Given I enter a password "MyP@ssword"         # features/steps/password_steps.py:4
+    When I submit the password                    # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe" # features/steps/password_steps.py:13
+    And the textbox should be colored "red"       # features/steps/password_steps.py:18
+
+  Scenario: Password is unsafe without symbols    # features/password_rating.feature:45
+    Given I enter a password "MyPassword0123"     # features/steps/password_steps.py:4
+    When I submit the password                    # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe" # features/steps/password_steps.py:13
+    And the textbox should be colored "red"       # features/steps/password_steps.py:18
+
+  Scenario: Password is unsafe with obvious pattern            # features/password_rating.feature:51
+    Given I enter a password "Password123!abc"                 # features/steps/password_steps.py:4
+    When I submit the password                                 # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe"              # features/steps/password_steps.py:13
+    And the textbox should be colored "red"                    # features/steps/password_steps.py:18
+    And the feedback should indicate obvious patterns detected # features/steps/password_steps.py:49
+
+  Scenario: Password is secure with mixed case, numbers, and symbols  # features/password_rating.feature:58
+    Given I enter a password "Tr0pic@lSunset!"                        # features/steps/password_steps.py:4
+    When I submit the password                                        # features/steps/password_steps.py:9
+    Then the password should be rated as "secure"                     # features/steps/password_steps.py:13
+    And the textbox should be colored "green"                         # features/steps/password_steps.py:18
+
+  Scenario: Empty password is unsafe              # features/password_rating.feature:64
+    Given I enter a password ""                   # None
+    When I submit the password                    # None
+    Then the password should be rated as "unsafe" # None
+    And the textbox should be colored "red"       # None
+
+  Scenario: Password with common pattern "123" is unsafe       # features/password_rating.feature:70
+    Given I enter a password "MyP@ss123word"                   # features/steps/password_steps.py:4
+    When I submit the password                                 # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe"              # features/steps/password_steps.py:13
+    And the textbox should be colored "red"                    # features/steps/password_steps.py:18
+    And the feedback should indicate obvious patterns detected # features/steps/password_steps.py:49
+
+  Scenario: Password with common pattern "qwerty" is unsafe  # features/password_rating.feature:77
+    Given I enter a password "Qwerty@123abc"                 # features/steps/password_steps.py:4
+    When I submit the password                               # features/steps/password_steps.py:9
+    Then the password should be rated as "unsafe"            # features/steps/password_steps.py:13
+    And the textbox should be colored "red"                  # features/steps/password_steps.py:18
+
+python : [33m
+En línea: 2 Carácter: 95
++ ... mática\clave segura"; python -m behave 2>&1 > test_output.txt; Get-Co ...
++                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([33m:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+You can implement step definitions for undefined steps with these snippets:
+
+@given(u'I enter a password ""')
+def step_impl(context):
+    raise NotImplementedError(u'STEP: Given I enter a password ""')
+
+
+Failing scenarios:
+  features/password_rating.feature:64  Empty password is unsafe
+
+0 features passed, 1 failed, 0 skipped
+11 scenarios passed, 1 failed, 0 skipped
+49 steps passed, 0 failed, 3 skipped, 1 undefined
+Took 0m0.015s
+[0m
