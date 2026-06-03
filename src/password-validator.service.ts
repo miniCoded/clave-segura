@@ -20,7 +20,7 @@ export interface PasswordValidationResponse {
   providedIn: 'root'
 })
 export class PasswordValidatorService {
-  private apiUrl = 'https://clave-segura.onrender.com:5000/api/validate-password';
+  private apiUrl = 'https://clave-segura.onrender.com/api/validate-password';
 
   constructor(private http: HttpClient) { }
 
