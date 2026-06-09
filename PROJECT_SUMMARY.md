@@ -71,7 +71,13 @@ clave segura/
 
 ## ✨ Key Features
 
-### 🟢 Real-Time Password Rating
+### � Password Generation
+- Generate secure passwords from any word
+- Automatically adds complexity (numbers, symbols, mixed case)
+- Ensures all security requirements are met
+- One-click copy to clipboard
+
+### �🟢 Real-Time Password Rating
 - Type and get instant feedback
 - 300ms debounce for optimal performance
 - No page refresh needed

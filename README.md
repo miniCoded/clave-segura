@@ -13,6 +13,11 @@ A comprehensive password rating application built with Angular, Python, and Gher
 - Instant feedback as user types
 - Debounced API calls for performance
 
+✅ **Password Generation from Word**
+- Generate secure passwords from any word
+- Automatically adds complexity (numbers, symbols, mixed case)
+- Ensures all security requirements are met
+
 ✅ **Color-Coded Security Levels**
 - 🟢 **Green (Secure)**: 12+ characters with all requirements
 - 🟠 **Amber (Half-Secure)**: 7-11 characters with all requirements
@@ -87,6 +92,26 @@ npm start
 
 The frontend will open on `http://localhost:4200`
 
+## Usage
+
+### Password Validation
+1. Enter your password in the input field
+2. Real-time validation will show security level
+3. View detailed requirements checklist
+
+### Password Generation
+1. Enter any word in the "Generate Password From Word" field
+2. Click "Generate 🔐" button
+3. A secure password will be created from your word
+4. Click "Copy" to copy the generated password to clipboard
+
+The generated password includes:
+- Your word (in mixed case)
+- Random letters
+- Random numbers
+- Random symbols
+- Total length: 12+ characters
+
 ## API Endpoints
 
 ### POST /api/validate-password
@@ -106,6 +131,33 @@ Validates a password and returns its security level.
   "message": "Password is secure",
   "details": {
     "length": 13,
+    "has_uppercase": true,
+    "has_lowercase": true,
+    "has_numbers": true,
+    "has_symbols": true,
+    "has_obvious_patterns": false,
+    "complexity_met": true
+  }
+}
+```
+
+### POST /api/generate-password
+Generates a secure password from a user-provided word.
+
+**Request:**
+```json
+{
+  "word": "sunshine"
+}
+```
+
+**Response:**
+```json
+{
+  "security_level": "secure",
+  "message": "Generated password: sunshIN3#kL9@",
+  "details": {
+    "length": 14,
     "has_uppercase": true,
     "has_lowercase": true,
     "has_numbers": true,
@@ -141,6 +193,30 @@ Health check endpoint.
 ### 🔴 Unsafe
 - **Length**: Less than 7 characters
 - **OR** Missing any of the complexity requirements
+
+## Password Generation
+
+The application can generate secure passwords from any word you provide:
+
+1. Enter any word (e.g., "sunshine", "ocean", "mountain")
+2. The generator will create a password that includes:
+   - Your word in mixed case
+   - Random letters
+   - Random numbers
+   - Random symbols
+   - Total length: 12+ characters
+
+Example:
+- Input word: `sunshine`
+- Generated password: `sunshIN3#kL9@`
+
+The generated password automatically meets all security requirements:
+- ✅ 12+ characters
+- ✅ Uppercase letters
+- ✅ Lowercase letters
+- ✅ Numbers
+- ✅ Symbols
+- ✅ No obvious patterns
 
 ## Testing with Gherkin
 
