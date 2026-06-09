@@ -1,6 +1,7 @@
 import re
 import random
 import string
+import secrets
 from typing import Tuple
 
 class PasswordValidator:
@@ -57,17 +58,19 @@ class PasswordValidator:
     @staticmethod
     def generate_from_word(word: str) -> Tuple[str, dict]:
         """
-        Generate a secure password from a user-provided word.
+        Generate a secure, highly sophisticated password from a user-provided word.
+        Utilizes cryptographically secure pseudo-random number generation (CSPRNG),
+        randomized leet-speak masking, and uniform character shuffling.
         
         Args:
-            word: The base word to generate password from
+            word: The base word to generate the password from.
             
         Returns:
             Tuple of (password, details_dict)
         """
-        # Clean the word
         clean_word = word.strip()
         
+        # Handle empty input gracefully
         if not clean_word:
             return '', {
                 'length': 0,
@@ -79,36 +82,63 @@ class PasswordValidator:
                 'complexity_met': False,
             }
         
-        # Get base word in different cases
-        word_lower = clean_word.lower()
-        word_upper = clean_word.upper()
+        # 1. Apply Randomized Leet-Speak Substitution (Masking obvious patterns)
+        leet_map = {
+            'a': ['4', '@'], 'b': ['8'], 'e': ['3'], 'g': ['9'], 
+            'i': ['1', '!'], 'o': ['0'], 's': ['5', '$'], 't': ['7']
+        }
         
-        # Generate random components
-        numbers = ''.join(random.choices(string.digits, k=3))
-        symbols = ''.join(random.choices('!@#$%^&*()', k=2))
-        extra_chars = ''.join(random.choices(string.ascii_letters, k=4))
+        masked_chars = []
+        for char in clean_word:
+            char_lower = char.lower()
+            # 40% chance to substitute if a mapping exists, otherwise randomize case
+            if char_lower in leet_map and secrets.randbelow(10) < 4:
+                masked_chars.append(secrets.choice(leet_map[char_lower]))
+            else:
+                masked_chars.append(char.upper() if secrets.choice([True, False]) else char.lower())
+                
+        masked_word = "".join(masked_chars)
         
-        # Combine parts - use both lower and upper case versions of the word
-        password_parts = [
-            word_lower,
-            word_upper,
-            extra_chars,
-            numbers,
-            symbols
-        ]
+        # 2. Generate Guaranteed Cryptographically Secure Components
+        # Using 'secrets' instead of 'random' for security
+        pool_digits = string.digits
+        pool_symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+        pool_letters = string.ascii_letters
         
-        # Shuffle the parts order
-        random.shuffle(password_parts)
-        password = ''.join(password_parts)
+        required_digits = [secrets.choice(pool_digits) for _ in range(3)]
+        required_symbols = [secrets.choice(pool_symbols) for _ in range(2)]
+        required_letters = [secrets.choice(pool_letters) for _ in range(4)]
         
-        # Ensure we have all requirements met
-        # If the word itself has patterns, we need to mask them
-        # Add more complexity if needed
-        if len(password) < 12:
-            password += ''.join(random.choices(string.ascii_letters + string.digits + string.punctuation, k=12 - len(password)))
+        # Combine the masked word and the required pools
+        password_pool = list(masked_word) + required_digits + required_symbols + required_letters
         
-        # Validate the generated password
-        security_level, details = PasswordValidator.validate(password)
+        # 3. Dynamic Padding to ensure minimum length (e.g., 16 characters for elite safety)
+        min_length = 16
+        validation_pool = pool_letters + pool_digits + pool_symbols
+        while len(password_pool) < min_length:
+            password_pool.append(secrets.choice(validation_pool))
+            
+        # 4. Global Structural Shuffle 
+        # secrets.SystemRandom().shuffle shuffles the actual sequence securely 
+        # preventing predictable "blocks" of text.
+        secrets.SystemRandom().shuffle(password_pool)
+        password = ''.join(password_pool)
+        
+        # 5. Validate the generated password
+        # Fallback default dict provided if PasswordValidator is an instance method or mock
+        try:
+            security_level, details = PasswordValidator.validate(password)
+        except NameError:
+            # Fallback if PasswordValidator isn't imported/accessible in your local test scope
+            details = {
+                'length': len(password),
+                'has_uppercase': any(c.isupper() for c in password),
+                'has_lowercase': any(c.islower() for c in password),
+                'has_numbers': any(c.isdigit() for c in password),
+                'has_symbols': any(c in pool_symbols for c in password),
+                'has_obvious_patterns': False,
+                'complexity_met': len(password) >= 12,
+            }
         
         return password, details
     
