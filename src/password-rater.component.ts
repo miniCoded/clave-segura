@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { trigger, transition, style, animate } from '@angular/animations';
 import { PasswordValidatorService, PasswordValidationResponse, PasswordGenerationResponse } from './password-validator.service';
-import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -12,14 +11,7 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './password-rater.component.html',
   styleUrls: ['./password-rater.component.css'],
-  animations: [
-    trigger('fadeIn', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(10px)' }),
-        animate('400ms 100ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ])
-  ]
+  animations: [] // Removed complex triggers to support modern console snapping
 })
 export class PasswordRaterComponent implements OnInit {
   passwordControl = new FormControl('');
@@ -46,7 +38,7 @@ export class PasswordRaterComponent implements OnInit {
         this.isLoading = false;
       },
       error => {
-        console.error('Error validating password', error);
+        console.error('CRIT_ERR: Failed payload check', error);
         this.isLoading = false;
       }
     );
@@ -67,7 +59,7 @@ export class PasswordRaterComponent implements OnInit {
         this.isGenerating = false;
       },
       error => {
-        console.error('Error generating password', error);
+        console.error('CRIT_ERR: Failed generator run', error);
         this.isGenerating = false;
       }
     );
@@ -75,15 +67,7 @@ export class PasswordRaterComponent implements OnInit {
 
   getSecurityClass(): string {
     if (!this.validationResult) return '';
-    switch (this.validationResult.security_level) {
-      case 'secure':
-        return 'secure';
-      case 'half-secure':
-        return 'half-secure';
-      case 'unsafe':
-      default:
-        return 'unsafe';
-    }
+    return this.validationResult.security_level;
   }
 
   getSecurityMessage(): string {
@@ -91,11 +75,11 @@ export class PasswordRaterComponent implements OnInit {
     const level = this.validationResult.security_level;
     switch (level) {
       case 'secure':
-        return 'Excellent! Your password is secure';
+        return 'Status Secure. Complexity requirements met.';
       case 'half-secure':
-        return 'Good. Consider adding more characters';
+        return 'Status Warning. Recommended structure depth unfulfilled.';
       case 'unsafe':
-        return 'Weak password. Please strengthen it';
+        return 'Status Unsafe. Insecure entry schema detected.';
       default:
         return '';
     }
@@ -109,7 +93,7 @@ export class PasswordRaterComponent implements OnInit {
           this.generatedPassword = result.message.split('Generated password: ')[1] || null;
         },
         error => {
-          console.error('Error generating password', error);
+          console.error('CRIT_ERR: Thread compilation crash', error);
         }
       );
     }
@@ -118,8 +102,6 @@ export class PasswordRaterComponent implements OnInit {
   copyGeneratedPassword(): void {
     if (this.generatedPassword) {
       navigator.clipboard.writeText(this.generatedPassword);
-      alert('Password copied to clipboard!');
     }
   }
 }
-
