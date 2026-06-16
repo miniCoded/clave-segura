@@ -61,27 +61,36 @@ class PasswordValidator:
     
     @staticmethod
     def generate_from_word(word: str) -> Tuple[str, dict]:
-        """Generates a secure password from a word by forcing complexity requirements."""
+        """Generates a secure password from a word with randomized variation."""
         if not word:
             return "", {}
-            
-        # Ensure at least 16 characters by padding if necessary
-        base = word[:10]
-        # Force-include requirements
-        password = base[0].upper() + base[1:] + "12345!@#$"
+
+        # 1. Define transformation strategies
+        def apply_leet(w):
+            mapping = {'a': '@', 'e': '3', 'i': '!', 'o': '0', 's': '$', 't': '7'}
+            return "".join(mapping.get(c.lower(), c) for c in w)
+
+        # 2. Base processing: Mix of capitalization and leet-speak
+        processed = word[:10]
+        if random.choice([True, False]):
+            processed = processed.capitalize()
+        processed = apply_leet(processed)
         
-        # Shuffle to randomize
-        char_list = list(password)
-        random.shuffle(char_list)
-        password = "".join(char_list)
+        # 3. Add mandatory complexity components
+        # We select from different sets of symbols/numbers to create variety
+        variations = ["1!#", "2@$", "8%^", "9&*"]
+        suffix = random.choice(variations)
+        password = processed + suffix
         
-        # Ensure it meets the 16 character requirement for the Gherkin tests
+        # 4. Fill to meet the 16-character requirement (Gherkin test constraint)
+        # We use a random character generator for the remaining length
         while len(password) < 16:
-            password += "a1!"
+            password += secrets.choice(string.ascii_letters + string.digits + "!@#")
             
-        # Validate immediately to generate the 'details' dict expected by tests
+        # 5. Validate immediately to generate the 'details' dict
         level, details = PasswordValidator.validate(password)
         return password, details
+    
     @staticmethod
     def validate(password: str) -> Tuple[str, dict]:
         length = len(password)
