@@ -90,7 +90,7 @@ class PasswordValidator:
             password += secrets.choice(string.ascii_letters + string.digits)
         
         # 6. Truncate to maximum 14 characters if needed
-        password = password[:14]
+        password = password[:12]
             
         # 6. Validate immediately
         level, details = PasswordValidator.validate(password)
