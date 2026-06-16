@@ -131,3 +131,12 @@ def step_error_message(context):
     # For empty word, the generate_from_word returns empty string
     assert not context.password or len(context.password) == 0, \
         "Should not generate password for empty input"
+
+@then(u'the password should contain numbers and symbols')
+def step_contains_numbers_and_symbols(context):
+    """Check that password contains both numbers and symbols."""
+    has_numbers = any(c.isdigit() for c in context.password)
+    symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+    has_symbols = any(c in symbols for c in context.password)
+    assert has_numbers and has_symbols, \
+        "Password must contain both numbers and symbols"
