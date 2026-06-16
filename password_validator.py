@@ -75,8 +75,8 @@ class PasswordValidator:
 
         transformed_word = apply_leet(base_processed)
         
-        # 2. Determine length: use input word length + 8 extra chars, min 16
-        target_length = max(16, len(transformed_word) + 8)
+        # 2. Determine length: use input word length + 8 extra chars, max 14
+        target_length = min(14, len(transformed_word) + 8)
         
         # 3. Create padding components
         prefix = "".join(secrets.choice(string.ascii_letters) for _ in range(3))
@@ -88,6 +88,9 @@ class PasswordValidator:
         # 5. Final adjustment to hit target length precisely
         while len(password) < target_length:
             password += secrets.choice(string.ascii_letters + string.digits)
+        
+        # 6. Truncate to maximum 14 characters if needed
+        password = password[:14]
             
         # 6. Validate immediately
         level, details = PasswordValidator.validate(password)
@@ -115,7 +118,7 @@ class PasswordValidator:
         }
         
         # Remove upper bound to satisfy 16+ char requirements
-        if length >= 12 and complexity_met and no_obvious_patterns:
+        if length >= 12 and length <= 14 and complexity_met and no_obvious_patterns:
             return 'secure', details
         
         if 7 <= length <= 11 and complexity_met and no_obvious_patterns:
