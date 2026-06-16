@@ -61,36 +61,37 @@ class PasswordValidator:
     
     @staticmethod
     def generate_from_word(word: str) -> Tuple[str, dict]:
-        """Generates a secure password from a word with randomized variation."""
+        """Generates a secure password with dynamic length, space handling, and middle-insertion."""
         if not word:
             return "", {}
 
-        # 1. Define transformation strategies
+        # 1. Handle spaces and transform the base word
+        # Replace spaces with underscores to keep it readable but compliant
+        base_processed = word.replace(" ", "_")
+        
         def apply_leet(w):
             mapping = {'a': '@', 'e': '3', 'i': '!', 'o': '0', 's': '$', 't': '7'}
             return "".join(mapping.get(c.lower(), c) for c in w)
 
-        # 2. Base processing: Mix of capitalization and leet-speak
-        processed = word[:10]
-        if random.choice([True, False]):
-            processed = processed.capitalize()
-        processed = apply_leet(processed)
+        transformed_word = apply_leet(base_processed)
         
-        # 3. Add mandatory complexity components
-        # We select from different sets of symbols/numbers to create variety
-        variations = ["1!#", "2@$", "8%^", "9&*"]
-        suffix = random.choice(variations)
-        password = processed + suffix
+        # 2. Determine length: use input word length + 8 extra chars, min 16
+        target_length = max(16, len(transformed_word) + 8)
         
-        # 4. Fill to meet the 16-character requirement (Gherkin test constraint)
-        # We use a random character generator for the remaining length
-        while len(password) < 16:
-            password += secrets.choice(string.ascii_letters + string.digits + "!@#")
+        # 3. Create padding components
+        prefix = "".join(secrets.choice(string.ascii_letters) for _ in range(3))
+        suffix = "".join(secrets.choice(string.digits + "!@#$") for _ in range(5))
+        
+        # 4. Assemble: Place transformed word in the middle
+        password = f"{prefix}{transformed_word}{suffix}"
+        
+        # 5. Final adjustment to hit target length precisely
+        while len(password) < target_length:
+            password += secrets.choice(string.ascii_letters + string.digits)
             
-        # 5. Validate immediately to generate the 'details' dict
+        # 6. Validate immediately
         level, details = PasswordValidator.validate(password)
         return password, details
-    
     @staticmethod
     def validate(password: str) -> Tuple[str, dict]:
         length = len(password)
