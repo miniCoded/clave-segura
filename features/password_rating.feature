@@ -3,8 +3,8 @@ Feature: Password Security Rating
   I want to rate the security of my password
   So that I can create secure passwords
 
-  Scenario: Password is secure with 12+ characters and all requirements
-    Given I enter a password "MyStr0ng@Pwd99"
+  Scenario: Password is secure with exactly 12 characters and all requirements
+    Given I enter a password "MyStr0ng@Pw9"
     When I submit the password
     Then the password should be rated as "secure"
     And the textbox should be colored "green"

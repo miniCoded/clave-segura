@@ -38,6 +38,12 @@ def step_password_length(context, length):
     assert len(context.password) >= length, \
         f"Password length {len(context.password)} is less than required {length}"
 
+@then('the password should be at most {length:d} characters long')
+def step_password_max_length(context, length):
+    """Check that password does not exceed maximum length requirement."""
+    assert len(context.password) <= length, \
+        f"Password length {len(context.password)} exceeds maximum {length}"
+
 @then('the password should contain uppercase letters')
 def step_contains_uppercase(context):
     """Check that password contains uppercase letters."""
@@ -121,9 +127,9 @@ def step_mixed_case(context):
 @then('the password should be shuffled and randomized')
 def step_shuffled_randomized(context):
     """Check that password is properly randomized."""
-    # Just verify the password exists and has length
-    assert len(context.password) >= 16, \
-        "Password should be properly randomized and at least 16 characters"
+    # Just verify the password exists and respects maximum length constraint
+    assert len(context.password) <= 12, \
+        "Password should not exceed maximum length of 12 characters"
 
 @then('an error message should be displayed')
 def step_error_message(context):

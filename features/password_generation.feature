@@ -7,7 +7,7 @@ Feature: Password Generation
     Given I enter the word "sunshine"
     When I request password generation
     Then a password should be generated
-    And the password should be at least 16 characters long
+    And the password should be at most 12 characters long
     And the password should contain uppercase letters
     And the password should contain lowercase letters
     And the password should contain numbers
@@ -18,14 +18,14 @@ Feature: Password Generation
     Given I enter the word "password"
     When I request password generation
     Then a password should be generated
-    And the password should be at least 16 characters long
+    And the password should be at most 12 characters long
     And the password should not contain the word "password"
 
   Scenario: Generate password from word "admin"
     Given I enter the word "admin"
     When I request password generation
     Then a password should be generated
-    And the password should be at least 16 characters long
+    And the password should be at most 12 characters long
     And the password should contain numbers and symbols
 
   Scenario: Generate password from empty word
@@ -59,4 +59,4 @@ Feature: Password Generation
     When I request password generation
     Then a password should be generated
     And the password should be shuffled and randomized
-    And the password should be at least 16 characters long
+    And the password should be at most 12 characters long

@@ -75,21 +75,40 @@ class PasswordValidator:
 
         transformed_word = apply_leet(base_processed)
         
-        # 2. Determine length: use input word length + 8 extra chars, max 14
-        target_length = min(14, len(transformed_word) + 8)
+        # 2. Determine length: use input word length + 8 extra chars, max 12.
+        target_length = min(12, len(transformed_word) + 8)
         
-        # 3. Create padding components
+        # 3. Create padding components with guaranteed digits and symbols
         prefix = "".join(secrets.choice(string.ascii_letters) for _ in range(3))
-        suffix = "".join(secrets.choice(string.digits + "!@#$") for _ in range(5))
+        
+        # Ensure at least 3 digits and 2 symbols in the suffix
+        required_digits = 3
+        required_symbols = 2
+        min_suffix_length = required_digits + required_symbols
+        
+        # Generate guaranteed digits and symbols
+        guaranteed_digits = "".join(secrets.choice(string.digits) for _ in range(required_digits))
+        guaranteed_symbols = "".join(secrets.choice("!@#$") for _ in range(required_symbols))
+        
+        # Calculate remaining space after guaranteed chars
+        remaining_space = target_length - len(prefix) - len(transformed_word)
+        # Ensure we don't exceed target length
+        remaining_space = max(min_suffix_length, min(5, remaining_space))
+        
+        # Fill remaining space with random chars from digits and symbols
+        extra_length = remaining_space - min_suffix_length
+        extra_chars = "".join(secrets.choice(string.digits + "!@#$") for _ in range(extra_length))
+        
+        suffix = guaranteed_digits + guaranteed_symbols + extra_chars
+        # Shuffle the suffix to mix digits and symbols
+        suffix_list = list(suffix)
+        secrets.SystemRandom().shuffle(suffix_list)
+        suffix = "".join(suffix_list)
         
         # 4. Assemble: Place transformed word in the middle
         password = f"{prefix}{transformed_word}{suffix}"
         
-        # 5. Final adjustment to hit target length precisely
-        while len(password) < target_length:
-            password += secrets.choice(string.ascii_letters + string.digits)
-        
-        # 6. Truncate to maximum 14 characters if needed
+        # 5. Truncate to maximum 12 characters if needed
         password = password[:12]
             
         # 6. Validate immediately
@@ -118,7 +137,7 @@ class PasswordValidator:
         }
         
         # Remove upper bound to satisfy 16+ char requirements
-        if length >= 12 and length <= 14 and complexity_met and no_obvious_patterns:
+        if length >= 12 and complexity_met and no_obvious_patterns:
             return 'secure', details
         
         if 7 <= length <= 11 and complexity_met and no_obvious_patterns:
